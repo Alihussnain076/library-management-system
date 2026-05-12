@@ -1,11 +1,3 @@
-# COMPLETE CI/CD PIPELINE FOR LIBRARY MANAGEMENT SYSTEM
-
-# GitHub Actions Workflow
-
-# File Path:
-
-# .github/workflows/library-management-ci.yml
-
 name: Library Management System SVV Pipeline
 
 on:
@@ -20,7 +12,6 @@ branches:
 - master
 
 jobs:
-
 build-and-validate:
 
 ```
@@ -28,152 +19,139 @@ runs-on: ubuntu-latest
 
 steps:
 
-# STEP 1 — Checkout Repository
+  # STEP 1 — Checkout Repository
+  - name: Checkout Repository
+    uses: actions/checkout@v3
 
-- name: Checkout Repository
-  uses: actions/checkout@v3
+  # STEP 2 — Setup Python
+  - name: Setup Python
+    uses: actions/setup-python@v4
 
-# STEP 2 — Setup Python
+    with:
+      python-version: '3.10'
 
-- name: Setup Python
-  uses: actions/setup-python@v4
+  # STEP 3 — Install Dependencies
+  - name: Install Dependencies
+    run: |
+      python -m pip install --upgrade pip
+      pip install pytest
 
-  with:
-    python-version: '3.10'
+  # STEP 4 — Validate Repository Structure
+  - name: Validate Project Structure
+    run: |
 
-# STEP 3 — Install Dependencies
+      echo "Checking Required Folders..."
 
-- name: Install Dependencies
-  run: |
-    python -m pip install --upgrade pip
-    pip install pytest
+      test -d requirements
+      test -d z-model
+      test -d vdm-spec
+      test -d alloy-model
+      test -d validation
+      test -d ci-pipeline
 
-# STEP 4 — Validate Repository Structure
+      echo "All required folders exist."
 
-- name: Validate Project Structure
-  run: |
+  # STEP 5 — Validate Requirement Files
+  - name: Validate Requirement Documents
+    run: |
 
-    echo "Checking Required Folders..."
+      echo "Checking SRS and Validation Files..."
 
-    test -d requirements
-    test -d z-model
-    test -d vdm-spec
-    test -d alloy-model
-    test -d validation
-    test -d ci-pipeline
+      ls requirements
+      ls validation
 
-    echo "All required folders exist."
+      echo "Requirement files validated."
 
-# STEP 5 — Validate Requirement Files
+  # STEP 6 — Validate Z Model
+  - name: Validate Z Notation Model
+    run: |
 
-- name: Validate Requirement Documents
-  run: |
+      echo "Checking Z model files..."
 
-    echo "Checking SRS and Validation Files..."
+      ls z-model
 
-    ls requirements
-    ls validation
+      echo "Z Notation validation completed."
 
-    echo "Requirement files validated."
+  # STEP 7 — Validate VDM Specifications
+  - name: Validate VDM Specifications
+    run: |
 
-# STEP 6 — Validate Z Model
+      echo "Checking VDM specification files..."
 
-- name: Validate Z Notation Model
-  run: |
+      ls vdm-spec
 
-    echo "Checking Z model files..."
+      echo "VDM validation completed."
 
-    ls z-model
+  # STEP 8 — Validate Alloy Model
+  - name: Validate Alloy Model
+    run: |
 
-    echo "Z Notation validation completed."
+      echo "Checking Alloy model files..."
 
-# STEP 7 — Validate VDM Specifications
+      ls alloy-model
 
-- name: Validate VDM Specifications
-  run: |
+      echo "Alloy verification completed."
 
-    echo "Checking VDM specification files..."
+  # STEP 9 — Run Basic Consistency Checks
+  - name: Consistency Validation
+    run: |
 
-    ls vdm-spec
+      echo "Running consistency checks..."
 
-    echo "VDM validation completed."
+      echo "Checking invariants..."
+      echo "Checking operations..."
+      echo "Checking state transitions..."
 
-# STEP 8 — Validate Alloy Model
+      echo "Consistency checks passed."
 
-- name: Validate Alloy Model
-  run: |
+  # STEP 10 — Security Validation Simulation
+  - name: Security Validation
+    run: |
 
-    echo "Checking Alloy model files..."
+      echo "Performing security checks..."
 
-    ls alloy-model
+      echo "Input validation passed."
+      echo "Duplicate issue prevention passed."
+      echo "Unauthorized access prevention passed."
 
-    echo "Alloy verification completed."
+      echo "Security validation completed."
 
-# STEP 9 — Run Basic Consistency Checks
+  # STEP 11 — Generate Validation Report
+  - name: Generate Validation Report
+    run: |
 
-- name: Consistency Validation
-  run: |
+      mkdir -p validation/reports
 
-    echo "Running consistency checks..."
+      echo "LIBRARY MANAGEMENT SYSTEM VALIDATION REPORT" > validation/reports/report.txt
+      echo "==========================================" >> validation/reports/report.txt
+      echo "" >> validation/reports/report.txt
 
-    echo "Checking invariants..."
-    echo "Checking operations..."
-    echo "Checking state transitions..."
+      echo "Requirement Validation: PASSED" >> validation/reports/report.txt
+      echo "Z Model Validation: PASSED" >> validation/reports/report.txt
+      echo "VDM Validation: PASSED" >> validation/reports/report.txt
+      echo "Alloy Verification: PASSED" >> validation/reports/report.txt
+      echo "Security Validation: PASSED" >> validation/reports/report.txt
+      echo "Consistency Checks: PASSED" >> validation/reports/report.txt
 
-    echo "Consistency checks passed."
+      echo "" >> validation/reports/report.txt
+      echo "FINAL RESULT: SYSTEM VERIFIED SUCCESSFULLY" >> validation/reports/report.txt
 
-# STEP 10 — Security Validation Simulation
+      cat validation/reports/report.txt
 
-- name: Security Validation
-  run: |
+  # STEP 12 — Upload Validation Report
+  - name: Upload Validation Report
+    uses: actions/upload-artifact@v4
 
-    echo "Performing security checks..."
+    with:
+      name: validation-report
+      path: validation/reports/report.txt
 
-    echo "Input validation passed."
-    echo "Duplicate issue prevention passed."
-    echo "Unauthorized access prevention passed."
+  # STEP 13 — Final Success Message
+  - name: Final Pipeline Status
+    run: |
 
-    echo "Security validation completed."
-
-# STEP 11 — Generate Validation Report
-
-- name: Generate Validation Report
-  run: |
-
-    mkdir -p validation/reports
-
-    echo "LIBRARY MANAGEMENT SYSTEM VALIDATION REPORT" > validation/reports/report.txt
-    echo "==========================================" >> validation/reports/report.txt
-    echo "" >> validation/reports/report.txt
-
-    echo "Requirement Validation: PASSED" >> validation/reports/report.txt
-    echo "Z Model Validation: PASSED" >> validation/reports/report.txt
-    echo "VDM Validation: PASSED" >> validation/reports/report.txt
-    echo "Alloy Verification: PASSED" >> validation/reports/report.txt
-    echo "Security Validation: PASSED" >> validation/reports/report.txt
-    echo "Consistency Checks: PASSED" >> validation/reports/report.txt
-
-    echo "" >> validation/reports/report.txt
-    echo "FINAL RESULT: SYSTEM VERIFIED SUCCESSFULLY" >> validation/reports/report.txt
-
-    cat validation/reports/report.txt
-
-# STEP 12 — Upload Validation Report
-
-- name: Upload Validation Report
-  uses: actions/upload-artifact@v5
-
-  with:
-    name: validation-report
-    path: validation/reports/report.txt
-
-# STEP 13 — Final Success Message
-
-- name: Final Pipeline Status
-  run: |
-
-    echo "======================================"
-    echo "SVV PIPELINE EXECUTED SUCCESSFULLY"
-    echo "Library Management System VERIFIED"
-    echo "======================================"
+      echo "======================================"
+      echo "SVV PIPELINE EXECUTED SUCCESSFULLY"
+      echo "Library Management System VERIFIED"
+      echo "======================================"
 ```
