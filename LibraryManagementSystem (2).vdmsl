@@ -1,0 +1,113 @@
+class LibraryManagementSystem
+
+types
+    BookId     = nat;
+    StudentId  = nat;
+    FineAmount = nat;
+
+state LibrarySystem of
+    books          : set of BookId
+    students       : set of StudentId
+    availableBooks : set of BookId
+    issuedBooks    : map BookId to StudentId
+    fines          : map StudentId to FineAmount
+
+inv mk_LibrarySystem(books, students, availableBooks, issuedBooks, fines) ==
+(
+    dom issuedBooks subset books and
+    rng issuedBooks subset students and
+    availableBooks inter dom issuedBooks = {}
+)
+
+init s ==
+    s = mk_LibrarySystem({}, {}, {}, {|->}, {|->})
+
+operations
+
+-- =========================================
+-- ADD BOOK
+-- =========================================
+AddBook : BookId ==> ()
+AddBook(bid) ==
+(
+    books          := books union {bid};
+    availableBooks := availableBooks union {bid};
+)
+pre  bid not in set books
+post bid in set books;
+
+-- =========================================
+-- REGISTER STUDENT
+-- =========================================
+RegisterStudent : StudentId ==> ()
+RegisterStudent(sid) ==
+(
+    students := students union {sid};
+)
+pre  sid not in set students
+post sid in set students;
+
+-- =========================================
+-- BORROW BOOK
+-- =========================================
+BorrowBook : StudentId * BookId ==> ()
+BorrowBook(sid, bid) ==
+(
+    issuedBooks    := issuedBooks munion {bid |-> sid};
+    availableBooks := availableBooks \ {bid};
+)
+pre  sid in set students and
+     bid in set availableBooks and
+     bid not in set dom issuedBooks
+post issuedBooks(bid) = sid;
+
+-- =========================================
+-- RETURN BOOK
+-- =========================================
+ReturnBook : StudentId * BookId ==> ()
+ReturnBook(sid, bid) ==
+(
+    issuedBooks    := {bid} <-: issuedBooks;
+    availableBooks := availableBooks union {bid};
+)
+pre  bid in set dom issuedBooks and
+     issuedBooks(bid) = sid
+post bid in set availableBooks;
+
+-- =========================================
+-- ADD FINE
+-- =========================================
+AddFine : StudentId * FineAmount ==> ()
+AddFine(sid, amount) ==
+(
+    fines := fines ++ {sid |-> amount};
+)
+pre  sid in set students
+post sid in set dom fines;
+
+functions
+
+-- =========================================
+-- CHECK AVAILABILITY
+-- =========================================
+IsAvailable : BookId -> bool
+IsAvailable(bid) ==
+    bid in set availableBooks;
+
+-- =========================================
+-- GET FINE
+-- =========================================
+GetFine : StudentId -> FineAmount
+GetFine(sid) ==
+    if sid in set dom fines
+    then fines(sid)
+    else 0;
+
+-- =========================================
+-- COUNT ISSUED BOOKS
+-- =========================================
+CountIssuedBooks : StudentId -> nat
+CountIssuedBooks(sid) ==
+    card {b | b in set dom issuedBooks & issuedBooks(b) = sid};
+
+end LibraryManagementSystem

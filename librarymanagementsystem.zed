@@ -1,0 +1,185 @@
+[BOOK, STUDENT]
+
+
+
+LibrarySystem
+
+------------------------------
+
+books : ℙ BOOK
+
+students : ℙ STUDENT
+
+issued : BOOK ↔ STUDENT
+
+available : ℙ BOOK
+
+fines : STUDENT ↔ ℕ
+
+
+
+∀ b : BOOK • #(issued[{b}]) ≤ 1
+
+
+
+available ∩ dom issued = ∅
+
+
+
+dom issued ⊆ books
+
+
+
+ran issued ⊆ students
+
+
+
+InitLibrarySystem
+
+------------------------------
+
+LibrarySystem
+
+------------------------------
+
+books = ∅
+
+students = ∅
+
+issued = ∅
+
+available = ∅
+
+fines = ∅
+
+
+
+
+
+AddBook
+
+------------------------------
+
+Δ LibrarySystem
+
+newBook? : BOOK
+
+------------------------------
+
+newBook? ∉ books
+
+books' = books ∪ {newBook?}
+
+available' = available ∪ {newBook?}
+
+students' = students
+
+issued' = issued
+
+fines' = fines
+
+
+
+RegisterStudent
+
+------------------------------
+
+Δ LibrarySystem
+
+newStudent? : STUDENT
+
+------------------------------
+
+newStudent? ∉ students
+
+students' = students ∪ {newStudent?}
+
+books' = books
+
+available' = available
+
+issued' = issued
+
+fines' = fines
+
+
+
+BorrowBook
+
+------------------------------
+
+Δ LibrarySystem
+
+s? : STUDENT
+
+b? : BOOK
+
+------------------------------
+
+s? ∈ students
+
+b? ∈ available
+
+b? ∉ dom issued
+
+issued' = issued ∪ {(b?, s?)}
+
+available' = available \ {b?}
+
+books' = books
+
+students' = students
+
+fines' = fines
+
+
+
+ReturnBook
+
+------------------------------
+
+Δ LibrarySystem
+
+s? : STUDENT
+
+b? : BOOK
+
+------------------------------
+
+(b?, s?) ∈ issued
+
+issued' = issued \ {(b?, s?)}
+
+available' = available ∪ {b?}
+
+books' = books
+
+students' = students
+
+fines' = fines
+
+
+
+AddFine
+
+------------------------------
+
+Δ LibrarySystem
+
+s? : STUDENT
+
+amount? : ℕ
+
+------------------------------
+
+s? ∈ students
+
+fines' = fines ∪ {(s?, amount?)}
+
+books' = books
+
+students' = students
+
+issued' = issued
+
+available' = available
