@@ -1,0 +1,65 @@
+Library Management System CI Workflow Explanation
+
+The GitHub Actions workflow is designed to automatically execute validation and verification tasks whenever changes are pushed to the repository.
+
+Workflow Name:
+Library Management System SVV Pipeline
+
+Workflow Trigger Events:
+
+1. Push to main branch
+2. Push to master branch
+3. Pull request creation
+
+Workflow Execution Steps:
+
+STEP 1:
+Checkout Repository
+The repository source files are downloaded into the workflow environment.
+
+STEP 2:
+Setup Python Environment
+Python environment is configured for validation execution.
+
+STEP 3:
+Install Dependencies
+Required validation dependencies are installed.
+
+STEP 4:
+Validate Project Structure
+The workflow checks whether all mandatory SVV folders exist.
+
+STEP 5:
+Validate Requirement Files
+Requirement engineering files and validation files are verified.
+
+STEP 6:
+Validate Z Models
+Z notation specifications are checked.
+
+STEP 7:
+Validate VDM Specifications
+VDM formal specifications are verified.
+
+STEP 8:
+Validate Alloy Models
+Alloy relational models and constraints are validated.
+
+STEP 9:
+Run Security Validation
+Basic security and consistency validation checks are executed.
+
+STEP 10:
+Generate Validation Report
+A final verification report is automatically generated.
+
+STEP 11:
+Upload Validation Report
+The generated report is uploaded as an artifact.
+
+STEP 12:
+Pipeline Completion
+The workflow displays successful verification status.
+
+Final Outcome:
+The CI workflow successfully validates the Library Management System SVV project automatically using GitHub Actions.
